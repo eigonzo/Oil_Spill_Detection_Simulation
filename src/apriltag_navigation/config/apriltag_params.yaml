@@ -1,0 +1,53 @@
+# apriltag_node:
+#   ros__parameters:
+#     image_transport: raw        # "raw" or "compressed"
+#     family: 36h11               # tag family name
+#     size: 0.162                   # tag edge size in meters (from SDF: 0.172 m)
+#     #profile: false                # don't print profiling info
+
+#     max_hamming: 0                # max corrected bits allowed
+
+#     detector:
+#       threads: 1                  # number of threads
+#       decimate: 2.0               # quad decimation
+#       blur: 0.0                   # gaussian blur sigma
+#       refine: True                  
+#       sharpening: 0.25            # sharpening strength
+#       debug: False                  
+
+#     pose_estimation_method: "pnp" # we want PnP pose
+
+#     tag:
+#       ids:    [0,1]                 # we're using tag ID 0
+#       frames: ["tag36h11:0","tag36h11:1"]      # publish TF with this frame name
+#       sizes:  [0.162, 0.162]             # override size for this tag
+
+apriltag_node:
+  ros__parameters:
+    # --- Image / camera setup ---
+    image_transport: "raw"
+    camera_frame: "camera_link"         # 👈 MUST match camera_info.frame_id
+    publish_tf: true                    # apriltag_ros publishes TF camera_link -> tag
+
+    # --- Tag family & general options ---
+    family: "36h11"
+    size: 0.162                         # m, or whatever your tag edge size is
+    max_hamming: 0
+
+    # --- Detector tuning ---
+    detector:
+      threads: 1
+      decimate: 2.0
+      blur: 0.0
+      refine: true
+      sharpening: 0.25
+      debug: false
+
+    # --- Pose estimation ---
+    pose_estimation_method: "pnp"       # good, standard
+
+    # --- Tags we're using ---
+    tag:
+      ids:    [0, 1]
+      frames: ["tag36h11:0", "tag36h11:1"]
+      sizes:  [0.162, 0.162]
