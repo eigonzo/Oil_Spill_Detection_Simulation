@@ -318,3 +318,51 @@ The recommended startup order is:
 3. MAVROS
 4. AprilTag navigation
 5. Image viewer
+
+Open each of the following in a separate terminal (or a separate Terminator pane).
+
+### a) Run PX4 + Gazebo
+
+```bash
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+cd ~/drone_ws/src/PX4-Autopilot
+PX4_GZ_WORLD=aruco make px4_sitl gz_x500_depth
+```
+
+The two `export` lines force Gazebo to render on the NVIDIA GPU instead of the Intel integrated graphics. They must be set in the same shell that launches PX4.
+
+Wait for the `x500_depth_0` model to spawn in the `aruco` world before starting the other terminals.
+
+### b) Run QGroundControl
+
+```bash
+cd ~/drone_ws/src/PX4-Autopilot
+./QGroundControl.AppImage
+```
+
+### c) Run MAVROS
+
+```bash
+ros2 run mavros mavros_node --ros-args \
+  -p fcu_url:="udp://:14540@localhost:14557" \
+  -p tgt_system:=1 \
+  -p tgt_component:=1 \
+  -r __ns:=/mavros
+```
+
+### d) Run AprilTag Navigation
+
+```bash
+cd ~/drone_ws
+source install/setup.bash
+ros2 launch apriltag_navigation apriltag_navigation.launch.py
+```
+
+### e) Run the Image Viewer
+
+```bash
+ros2 run rqt_image_view rqt_image_view
+```
+
+Select the annotated detection topic from the dropdown to confirm tags are being detected.
